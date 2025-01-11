@@ -2,68 +2,74 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated , BasePermission
 from rest_framework.response import Response
 from rest_framework import status
 
-# Import pagination in core app
-from core.pagination import DefaultPagination
+# DefaultPagination in core app
+from core.pagination import DefaultPagination  
 
-# Import Student Serializer
-from .serializers import StudentSerializer 
+# Import serializeres and models 
+from .serializers import StudentSerializer  
+from .models import Student  
+from user.models import User  
 
-# Import Student Model 
-from .models import Student 
-from user.models import User 
+# Constants for searching, and ordering
+SEARCH_FIELDS = ['national_code', 'phone_number', 'user__first_name', 'user__last_name' , 'user__username']
+ORDERING_FIELDS = ['class_room__base', 'class_room__field', 'id']
+DEFAULT_ORDERING = ['user__username']
 
-# Constants 
-SEARCH_FIELDS = ['national_code', 'phone_number', 'user__first_name', 'user__last_name'] 
-ORDERING_FIELDS = ['class_room__base', 'class_room__field', 'id'] 
-DEFAULT_ORDERING = ['user__username'] 
-
-# Student ViewSet for handling CRUD operations
+class IsStudent(BasePermission):
+    def has_permission(self , request , view):
+        user = request.user 
+        if user.user_type in ['student' , 'admin']:
+            return True 
+        return False 
+    
 class StudentViewSet(ModelViewSet):
-    queryset = Student.objects.all() 
+    """
+    ViewSet for handling CRUD operations on Student model.
+    Includes filtering, searching, ordering, and permission control.
+    """
+    queryset = Student.objects.all()
     serializer_class = StudentSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    search_fields = SEARCH_FIELDS 
+    search_fields = SEARCH_FIELDS
     ordering_fields = ORDERING_FIELDS
-    ordering = DEFAULT_ORDERING 
-    pagination_class = DefaultPagination 
-    permission_classes = [IsAuthenticated]
+    ordering = DEFAULT_ORDERING
+    pagination_class = DefaultPagination
+    permission_classes = [IsAuthenticated , IsStudent]
 
     def get_queryset(self):
         """
-        Custom queryset:
-        - Admin users can view all students.
-        - Students can only view their own profile.
+        Custom queryset based on user type:
+        - Admin: Can view all students.
+        - Student: Can only view their own profile.
         """
         user = self.request.user
+        
+        # Admin can see all students. 
+        if user.user_type == 'admin':
+            return super().get_queryset()
+        
+        #students just can see their profile.  
+        if user.user_type == 'student':
+            return super().get_queryset().filter(user=user)
 
-        if user.is_authenticated:
-            # Admin users can view all students
-            if user.user_type == 'admin':
-                return super().get_queryset()
-
-            # Students can view only their own profile
-            if user.user_type == 'student':
-                return super().get_queryset().filter(user=user)
-
-        # If user is not authenticated, return an empty queryset
         return self.queryset.none()
 
-        def create(self, request, *args, **kwargs):
-            """
-            Restrict students to only create profiles for themselves.
-            """
-            user = request.user
+    def create(self, request, *args, **kwargs):
+        """
+        Custom create method:
+        - Restrict students to only create profiles for themselves.
+        """
+        user = request.user
 
-            # Prevent students from creating profiles for others
-            if user.user_type == 'student':
-                if 'user' in request.data and int(request.data['user']) != user.id:
-                    return Response(
-                        {"detail": "Students cannot create profiles for others."},
-                        status=status.HTTP_403_FORBIDDEN
-                    )
+        if user.user_type == 'student' and 'user' in request.data:
+            if int(request.data['user']) != user.id:
+                return Response(
+                    {"detail": "Students cannot create profiles for others."},
+                    status=status.HTTP_403_FORBIDDEN
+                )
 
-            return super().create(request, *args, **kwargs)
+        return super().create(request, *args, **kwargs)

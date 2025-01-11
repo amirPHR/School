@@ -14,7 +14,7 @@ from core.pagination import DefaultPagination
 from .serializers import UserCreate
 from .models import User
 
-# Constants
+# Constants for searching, and ordering
 SEARCH_FIELDS = ['username', 'email', 'first_name', 'last_name']
 ORDERING_FIELDS = ['username', 'user_type']
 DEFAULT_ORDERING = ['username']
@@ -74,10 +74,11 @@ class UserViewSet(ModelViewSet):
         - All data for admins.
         - Only the logged-in user's data for non-admins.
         """
-        if self.request.user.is_authenticated:
-            if self.request.user.user_type == 'admin':
+        user = self.request.user
+        if user.is_authenticated:
+            if user.user_type == 'admin':
                 return self.queryset
-            return self.queryset.filter(id=self.request.user.id)
+            return self.queryset.filter(id=user.id)
         return self.queryset.none()
 
     def create(self, request, *args, **kwargs):
@@ -86,15 +87,18 @@ class UserViewSet(ModelViewSet):
         - Prevent logged-in users (non-admin) from creating new users.
         - Allow unauthenticated users to sign up.
         """
-        if request.user.is_authenticated and request.user.user_type in ['student', 'teacher']:
+        user = request.user
+        
+        # Prevent non-admin authenticated users from creating new users
+        if user.is_authenticated and user.user_type in ['student', 'teacher']:
             return Response(
-                {"message": "You are not allowed to create a new user."},
+                {"detail": "You are not allowed to create a new user."},
                 status=status.HTTP_403_FORBIDDEN
             )
-
-        # Allow admins to create new users
-        if request.user.is_authenticated and request.user.user_type == 'admin':
+    
+        # Admins can create new users
+        if user.is_authenticated and user.user_type == 'admin':
             return super().create(request, *args, **kwargs)
-
-        # Allow unauthenticated users to sign up (create)
+        
+        # Unauthenticated users can sign up
         return super().create(request, *args, **kwargs)

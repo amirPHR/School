@@ -13,6 +13,8 @@ from rest_framework import permissions
 from user.views import UserViewSet
 from student.views import StudentViewSet
 from class_room.views import ClassRoomViewSet
+from subject.views import SubjectViewSet 
+from teacher.views import TeacherViewSet
 
 # Admin site customization
 admin.site.site_header = "School Management System"
@@ -22,6 +24,8 @@ router = DefaultRouter()
 router.register(r'user', UserViewSet)  # User API
 router.register(r'student', StudentViewSet)  # Student API
 router.register(r'class_room', ClassRoomViewSet) # ClassRoom API
+router.register(r'subject' , SubjectViewSet) # Subject API 
+router.register(r'teacher' , TeacherViewSet) # Teacher API 
 
 # Swagger Schema View
 schema_view = get_schema_view(
