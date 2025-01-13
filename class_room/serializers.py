@@ -5,3 +5,4 @@ class ClassRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClassRoom 
         fields = ['base' , 'field']
+    

@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-uscewyqmk+ls$u$2@)%=b!vx&9!7a_9ahl0i%)5fwmb_8!-g70
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 
 # Application definition
@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     'teacher',
     'subject',
     'class_room',  
-    'attendance',
     'score',
     'core',
 ]
@@ -76,7 +75,7 @@ REST_FRAMEWORK = {
 # SimpleJWT
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT',),
-    "ACCESS_TOKEN_LIFETIME": timedelta(days = 1), 
+    "ACCESS_TOKEN_LIFETIME": timedelta(days = 365), 
 }
 
 # Djoser 

@@ -13,39 +13,52 @@ from core.pagination import DefaultPagination
 from .serializers import SubjectSerializer 
 from .models import Subject 
 from user.models import User 
-        
 
+# Constants for searching, and ordering
 SEARCH_AND_ORDERING_FIELDS = ['name']
+
 # Subject ViewSet 
 class SubjectViewSet(ModelViewSet):
     queryset = Subject.objects.all() 
     serializer_class = SubjectSerializer
     pagination_class = DefaultPagination
-    filter_backends = [SearchFilter , OrderingFilter] 
-    search_fields = [SEARCH_AND_ORDERING_FIELDS] 
-    ordering = [SEARCH_AND_ORDERING_FIELDS] 
+    filter_backends = SearchFilter , OrderingFilter
+    search_fields = SEARCH_AND_ORDERING_FIELDS 
+    ordering = SEARCH_AND_ORDERING_FIELDS
     permission_classes = [IsAuthenticated]
     
     def create(self , request , *args , **kwargs):
         user = request.user 
-        if user.is_authenticated and user.user_type in ['student' , 'teacher']:
-            return Response({'message':'You can not create subject.'} , status = status.HTTP_403_FORBIDDEN)  
-        return super().create(request , *args , **kwargs)
+        if user.user_type in ['admin']:
+            return super().create(request , *args , **kwargs) 
+        return Response(
+            {'detail':'You are not allow to create subject.'},
+            status = status.HTTP_403_FORBIDDEN
+        )
     
     def destroy(self , request , *args , **kwargs):
         user = request.user 
-        if user.user_type in ['student' , 'teacher']:
-            return Response({'message':'You can not delete the subject.'} , status = status.HTTP_403_FORBIDDEN)
-        return super().destroy(request , *args , **kwargs)
+        if user.user_type in ['admin']:
+            return super().destroy(request , *args , **kwargs) 
+        return Response(
+            {'detail':'You are not allow to create subject.'},
+            status = status.HTTP_403_FORBIDDEN
+        )
     
     def update(self, request, *args, **kwargs):
         user = request.user
-        if user.user_type in ['student', 'teacher']:
-            return Response({'message': 'You are not allowed to update this data.'}, status=status.HTTP_403_FORBIDDEN)
-        return super().update(request, *args, **kwargs)
-
+        if user.user_type in ['admin']:
+            return super().update(request , *args , **kwargs) 
+        return Response(
+            {'detail':'You are not allow to update subject.'},
+            status = status.HTTP_403_FORBIDDEN
+        )
+    
     def partial_update(self, request, *args, **kwargs):
         user = request.user
-        if user.user_type in ['student', 'teacher']:
-            return Response({'message': 'You are not allowed to update this data.'}, status=status.HTTP_403_FORBIDDEN)
-        return super().partial_update(request, *args, **kwargs)
+        if user.user_type in ['admin']:
+            return super().partial_update(request , *args , **kwargs) 
+        return Response(
+            {'detail':'You are not allow to update subject.'},
+            status = status.HTTP_403_FORBIDDEN
+        )

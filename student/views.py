@@ -2,12 +2,15 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.permissions import IsAuthenticated , BasePermission
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
 # DefaultPagination in core app
 from core.pagination import DefaultPagination  
+
+# Import Permission from permission.py in student app
+from .permission import IsStudentOrAdmin
 
 # Import serializeres and models 
 from .serializers import StudentSerializer  
@@ -19,13 +22,7 @@ SEARCH_FIELDS = ['national_code', 'phone_number', 'user__first_name', 'user__las
 ORDERING_FIELDS = ['class_room__base', 'class_room__field', 'id']
 DEFAULT_ORDERING = ['user__username']
 
-class IsStudent(BasePermission):
-    def has_permission(self , request , view):
-        user = request.user 
-        if user.user_type in ['student' , 'admin']:
-            return True 
-        return False 
-    
+# Student ViewSet
 class StudentViewSet(ModelViewSet):
     """
     ViewSet for handling CRUD operations on Student model.
@@ -38,7 +35,7 @@ class StudentViewSet(ModelViewSet):
     ordering_fields = ORDERING_FIELDS
     ordering = DEFAULT_ORDERING
     pagination_class = DefaultPagination
-    permission_classes = [IsAuthenticated , IsStudent]
+    permission_classes = [IsAuthenticated , IsStudentOrAdmin]
 
     def get_queryset(self):
         """
@@ -48,15 +45,7 @@ class StudentViewSet(ModelViewSet):
         """
         user = self.request.user
         
-        # Admin can see all students. 
-        if user.user_type == 'admin':
-            return super().get_queryset()
-        
-        #students just can see their profile.  
-        if user.user_type == 'student':
-            return super().get_queryset().filter(user=user)
-
-        return self.queryset.none()
+        return self.queryset if user.user_type == 'admin' else self.queryset.filter(user=user)
 
     def create(self, request, *args, **kwargs):
         """
