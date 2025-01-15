@@ -15,7 +15,6 @@ from .permissions import IsTeacherOrAdmin
 # Import serializers and models 
 from .serializers import TeacherSerializer 
 from .models import Teacher 
-from user.models import User 
 
 # Constants for Searching , Ordering , Deafault Ordering
 SEARCH_FIELDS = ['user__username' , 'phone_number' , 'national_code' , 'user__first_name' , 'user__last_name']
@@ -41,11 +40,8 @@ class TeacherViewSet(ModelViewSet):
         user = self.request.user
         if user.user_type == 'admin':
             return super().get_queryset()
-        elif user.user_type == 'teacher':
-            return super().get_queryset().filter(user=user)
         else:
-            # Return an empty queryset for unauthorized users
-            return super().get_queryset().none()
+            return super().get_queryset().filter(user=user)
             
     def create(self, request, *args, **kwargs):
         """
@@ -57,7 +53,7 @@ class TeacherViewSet(ModelViewSet):
         if user.user_type == 'teacher' and 'user' in request.data:
             if int(request.data['user']) != user.id:
                 return Response(
-                    {'detail': 'You are only allowed to create a profile for yourself.'},
+                    {'detail': 'You are only allowed to create a profile for other.'},
                     status=status.HTTP_403_FORBIDDEN
                 )
         return super().create(request, *args, **kwargs)

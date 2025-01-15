@@ -1,6 +1,6 @@
 # Import rest_framework libraries
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -24,10 +24,6 @@ DEFAULT_ORDERING = ['user__username']
 
 # Student ViewSet
 class StudentViewSet(ModelViewSet):
-    """
-    ViewSet for handling CRUD operations on Student model.
-    Includes filtering, searching, ordering, and permission control.
-    """
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -45,7 +41,10 @@ class StudentViewSet(ModelViewSet):
         """
         user = self.request.user
         
-        return self.queryset if user.user_type == 'admin' else self.queryset.filter(user=user)
+        if user.user_type == 'admin':
+            return super().get_queryset()
+        else:
+            return super().get_queryset().filter(user=user) 
 
     def create(self, request, *args, **kwargs):
         """

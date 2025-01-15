@@ -13,10 +13,7 @@ from core.pagination import DefaultPagination
 from .serializers import UserCreate
 from .models import User
 
-# Import Permission_class from permission.py in user app
-from .permission import CheckAdminPassword , IsAuthenticatedOrSignupOnly
-
-# Constants for searching, and ordering
+# Constants for searching , ordering and DefaultOrdering
 SEARCH_FIELDS = ['username', 'email', 'first_name', 'last_name']
 ORDERING_FIELDS = ['username', 'user_type']
 DEFAULT_ORDERING = ['username']
@@ -47,33 +44,37 @@ class UserViewSet(ModelViewSet):
     ordering = DEFAULT_ORDERING
     filterset_class = UserFilterSet
     pagination_class = DefaultPagination
-    permission_classes = [IsAuthenticatedOrSignupOnly, CheckAdminPassword]
-
-    def get_queryset(self):
+    
+    def get_queryset(self): 
         """
-        Custom queryset to return:
-        - All data for admins.
-        - Only the logged-in user's data for non-admins.
+        Users can only see their profiles.
         """
-        user = self.request.user
-        if not user.is_authenticated:
-            return self.request.none()
-        return self.queryset if user.user_type == 'admin' else self.queryset.filter(id=user.id)
-
-    def create(self, request, *args, **kwargs):
+        user = self.request.user 
+        if user.is_authenticated:
+            return super().get_queryset().filter(id=user.id) 
+        return super().get_queryset().none() 
+    
+    def create(self , request , *args, **kwargs):
+        user_type = request.data.get('user_type') 
+        password = request.data.get('password')
         """
-        Override create method:
-        - Prevent non-admin authenticated users from creating new users.
-        - Allow unauthenticated users to sign up.
+        permission for admin user
         """
+        if user_type == 'admin':
+            if password != '0960034455@gholampour':
+                return Response(
+                    {'detail':'Password for admin user is incorrect'},
+                    status = status.HTTP_403_FORBIDDEN)
+            return super().create(request , *args, **kwargs)    
+            
+        
         user = request.user 
-        
-        # Allow only admin to create new users
-        if user.user_type == 'admin':
-            return super().create(request, *args, **kwargs)
-        
-        # Prevent other authenticated users from creating new users
-        return Response(
-            {'detail': 'You are not allowed to create a new user.'},
-            status=status.HTTP_403_FORBIDDEN
-        )
+        """
+        Only admins can create user
+        """
+        if user.user_type != 'admin':
+            return Response(
+                {'detail':'You are not allow to create user.'},
+                status = status.HTTP_403_FORBIDDEN 
+            )
+        return super().create(request , *args, **kwargs)

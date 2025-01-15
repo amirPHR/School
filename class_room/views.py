@@ -1,8 +1,8 @@
 # Import rest_framework libraries
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import IsAdminUser
-from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -19,10 +19,6 @@ DEFAULT_ORDERING = ['base']
 
 # ClassRoom ViewSet
 class ClassRoomViewSet(ModelViewSet):
-    """
-    ViewSet for managing ClassRoom data:
-    - Allows only admin users to create and update.
-    """
     queryset = ClassRoom.objects.all()
     serializer_class = ClassRoomSerializer
     filter_backends = [OrderingFilter, DjangoFilterBackend]

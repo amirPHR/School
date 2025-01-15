@@ -1,6 +1,5 @@
 # Import rest_framework libraries
 from rest_framework.viewsets import ModelViewSet 
-from django_filters import rest_framework as filters
 from rest_framework.filters import SearchFilter , OrderingFilter 
 from rest_framework.permissions import IsAuthenticated , BasePermission
 from rest_framework.response import Response 
@@ -12,7 +11,6 @@ from core.pagination import DefaultPagination
 # Import serializers and models 
 from .serializers import SubjectSerializer 
 from .models import Subject 
-from user.models import User 
 
 # Constants for searching, and ordering
 SEARCH_AND_ORDERING_FIELDS = ['name']

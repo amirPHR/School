@@ -16,6 +16,7 @@ from class_room.views import ClassRoomViewSet
 from subject.views import SubjectViewSet 
 from teacher.views import TeacherViewSet
 from score.views import ScoreViewSet
+
 # Admin site customization
 admin.site.site_header = "School Management System"
 
@@ -27,6 +28,7 @@ router.register(r'class_room', ClassRoomViewSet) # ClassRoom API
 router.register(r'subject' , SubjectViewSet) # Subject API 
 router.register(r'teacher' , TeacherViewSet) # Teacher API 
 router.register(r'score' , ScoreViewSet) # Score API 
+
 
 # Swagger Schema View
 schema_view = get_schema_view(
