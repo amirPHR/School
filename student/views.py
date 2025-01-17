@@ -41,11 +41,10 @@ class StudentViewSet(ModelViewSet):
         """
         user = self.request.user
         
-        if user.user_type == 'admin':
-            return super().get_queryset()
-        else:
-            return super().get_queryset().filter(user=user) 
-
+        if user.user_type != 'admin':
+            return super().get_queryset().filter(user=user)
+        return super().get_queryset()
+    
     def create(self, request, *args, **kwargs):
         """
         Custom create method:

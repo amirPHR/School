@@ -51,19 +51,21 @@ class UserViewSet(ModelViewSet):
         """
         user = self.request.user 
         if user.is_authenticated:
+            if user.user_type == 'admin':
+                return super().get_queryset()
             return super().get_queryset().filter(id=user.id) 
-        return super().get_queryset().none() 
+        return super().get_queryset().none()
     
     def create(self , request , *args, **kwargs):
         user_type = request.data.get('user_type') 
         password = request.data.get('password')
         """
-        permission for admin user
+        permission for admin password   
         """
-        if user_type == 'admin':
+        if user_type in ['admin' , 'teacher']:
             if password != '0960034455@gholampour':
                 return Response(
-                    {'detail':'Password for admin user is incorrect'},
+                    {'detail':'Password is incorrect'},
                     status = status.HTTP_403_FORBIDDEN)
             return super().create(request , *args, **kwargs)    
             

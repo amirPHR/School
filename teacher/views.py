@@ -38,10 +38,9 @@ class TeacherViewSet(ModelViewSet):
         - Teacher: Access to their own profile only.
         """
         user = self.request.user
-        if user.user_type == 'admin':
-            return super().get_queryset()
-        else:
+        if user.user_type != 'admin':
             return super().get_queryset().filter(user=user)
+        return super().get_queryset()
             
     def create(self, request, *args, **kwargs):
         """

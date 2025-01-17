@@ -51,7 +51,9 @@ INSTALLED_APPS = [
     'subject',
     'class_room',  
     'score',
+    'event',
     'core',
+    'report_card',
 ]
 
 MIDDLEWARE = [

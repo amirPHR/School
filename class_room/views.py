@@ -25,7 +25,17 @@ class ClassRoomViewSet(ModelViewSet):
     ordering_fields = ORDERING_FIELDS
     ordering = DEFAULT_ORDERING
     pagination_class = DefaultPagination
-    permission_classes = [IsAdminUser]  
+    # permission_classes = [IsAdminUser]  
+    
+    def get_queryset(self):
+        user = self.request.user 
+        if user.user_type != 'admin':
+            return Response(
+                {'detail':'You do not have permission to perform this action.'},
+                status = status.HTTP_403_FORBIDDEN
+            )
+        return super().get_queryset()
+    
 
     def create(self, request, *args, **kwargs):
         """

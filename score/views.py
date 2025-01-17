@@ -11,14 +11,14 @@ from core.pagination import DefaultPagination
 
 # Import serializers and models 
 from .models import Score
-from .serializers import ScoreSerializer
+from .serializers import ScoreSerializer , GoodStudentSerializer 
 
 # Constants for Searching , Ordering and Default Ordering  
 SEARCH_FILTER = ['student__user__username' , 'student__national_code' , 'student__phone_number']
 ORDERING_FILTER = ['score' , 'date'] 
 DEFAULT_ORDERING = ['id']
 
-# Score ViewSet
+# Score ViewSet 
 class ScoreViewSet(ModelViewSet):
     queryset = Score.objects.all()
     serializer_class = ScoreSerializer
@@ -33,45 +33,53 @@ class ScoreViewSet(ModelViewSet):
         user = self.request.user 
         if user.user_type in ['admin','teacher']:
             return super().get_queryset() 
+        
         elif user.user_type == 'student':
-            return super().get_queryset().filter(user=user)
+            return super().get_queryset().filter(student__user=user)
     
     def create(self , request , *args , **kwargs):
         user = request.user
         if user.user_type in ['admin' , 'teacher']:
             return super().create(request , *args , **kwargs)
-        else:
-            return Response(
-                {'detail':'You are not allow to create score.'}, 
-                status = status.HTTP_403_FORBIDDEN
-            )
+        
+        return Response(
+            {'detail':'You are not allow to create score.'}, 
+            status = status.HTTP_403_FORBIDDEN
+        )
     
     def update(self , request , *args , **kwargs):
         user = request.user
         if user.user_type in ['admin' , 'teacher']:
             return super().update(request , *args , **kwargs)
-        else:
-            return Response(
-                {'detail':'You are not allow to create score.'}, 
-                status = status.HTTP_403_FORBIDDEN
-            )
+        
+        return Response(
+            {'detail':'You are not allow to update score.'}, 
+            status = status.HTTP_403_FORBIDDEN
+        )
             
     def destroy(self , request , *args , **kwargs):
         user = request.user
         if user.user_type in ['admin' , 'teacher']:
             return super().destroy(request , *args , **kwargs)
-        else:
-            return Response(
-                {'detail':'You are not allow to create score.'}, 
-                status = status.HTTP_403_FORBIDDEN
-            )
-            
+        
+        return Response(
+            {'detail':'You are not allow to delete score.'}, 
+            status = status.HTTP_403_FORBIDDEN
+        )
+        
     def partial_update(self , request , *args , **kwargs):
         user = request.user
         if user.user_type in ['admin' , 'teacher']:
             return super().partial_update(request , *args , **kwargs)
-        else:
-            return Response(
-                {'detail':'You are not allow to create score.'}, 
-                status = status.HTTP_403_FORBIDDEN
-            )
+        
+        return Response(
+            {'detail':'You are not allow to Partial update score.'}, 
+            status = status.HTTP_403_FORBIDDEN
+        )
+    
+class GoodStudentViewSet(ModelViewSet):
+    queryset = Score.objects.filter(
+        score__gte = 12,
+        disciplinery_status = 'very_good'
+    )
+    serializer_class = GoodStudentSerializer

@@ -1,7 +1,7 @@
 # Import rest_framework libraries
 from rest_framework.viewsets import ModelViewSet 
 from rest_framework.filters import SearchFilter , OrderingFilter 
-from rest_framework.permissions import IsAuthenticated , BasePermission
+from rest_framework.permissions import IsAuthenticated 
 from rest_framework.response import Response 
 from rest_framework import status 
 
@@ -26,6 +26,9 @@ class SubjectViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     
     def create(self , request , *args , **kwargs):
+        """ 
+        just admins are allowed to create subjects
+        """
         user = request.user 
         if user.user_type in ['admin']:
             return super().create(request , *args , **kwargs) 
@@ -35,6 +38,9 @@ class SubjectViewSet(ModelViewSet):
         )
     
     def destroy(self , request , *args , **kwargs):
+        """
+        just admins are allowed to delete subjects
+        """
         user = request.user 
         if user.user_type in ['admin']:
             return super().destroy(request , *args , **kwargs) 
@@ -44,6 +50,9 @@ class SubjectViewSet(ModelViewSet):
         )
     
     def update(self, request, *args, **kwargs):
+        """
+        just admins are allowed to update subjects
+        """
         user = request.user
         if user.user_type in ['admin']:
             return super().update(request , *args , **kwargs) 
@@ -53,6 +62,9 @@ class SubjectViewSet(ModelViewSet):
         )
     
     def partial_update(self, request, *args, **kwargs):
+        """
+        just admins are allowed to Partial update subjects
+        """
         user = request.user
         if user.user_type in ['admin']:
             return super().partial_update(request , *args , **kwargs) 
