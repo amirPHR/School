@@ -2,7 +2,7 @@
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend 
 from rest_framework.filters import SearchFilter , OrderingFilter 
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated , IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -11,7 +11,7 @@ from core.pagination import DefaultPagination
 
 # Import serializers and models 
 from .models import Score
-from .serializers import ScoreSerializer , GoodStudentSerializer 
+from .serializers import ScoreSerializer , BadStudentSerializer 
 
 # Constants for Searching , Ordering and Default Ordering  
 SEARCH_FILTER = ['student__user__username' , 'student__national_code' , 'student__phone_number']
@@ -38,15 +38,15 @@ class ScoreViewSet(ModelViewSet):
             return super().get_queryset().filter(student__user=user)
     
     def create(self , request , *args , **kwargs):
-        user = request.user
+        user = request.user 
         if user.user_type in ['admin' , 'teacher']:
-            return super().create(request , *args , **kwargs)
+            return super().update(request , *args , **kwargs)
         
         return Response(
             {'detail':'You are not allow to create score.'}, 
             status = status.HTTP_403_FORBIDDEN
         )
-    
+        
     def update(self , request , *args , **kwargs):
         user = request.user
         if user.user_type in ['admin' , 'teacher']:
@@ -77,9 +77,23 @@ class ScoreViewSet(ModelViewSet):
             status = status.HTTP_403_FORBIDDEN
         )
     
-class GoodStudentViewSet(ModelViewSet):
+# Bad Student ViewSet
+class BadStudentViewSet(ModelViewSet):
+    """
+    This View show students who has a bad score ):
+    """
     queryset = Score.objects.filter(
-        score__gte = 12,
-        disciplinery_status = 'very_good'
+        score__lte = 12,
+        date_year = 'second_turn'
     )
-    serializer_class = GoodStudentSerializer
+    serializer_class = BadStudentSerializer
+
+    def get_queryset(self):
+        user = self.request.user 
+        if user.user_type != 'admin':
+            return Response(
+                {'detail':'You can not see bad scores.'},
+                status = status.HTTP_403_FORBIDDEN 
+            )
+        return super().get_queryset()
+    

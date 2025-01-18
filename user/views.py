@@ -68,15 +68,13 @@ class UserViewSet(ModelViewSet):
                     {'detail':'Password is incorrect'},
                     status = status.HTTP_403_FORBIDDEN)
             return super().create(request , *args, **kwargs)    
-            
-        
-        user = request.user 
         """
-        Only admins can create user
+        permission for student password.
         """
-        if user.user_type != 'admin':
-            return Response(
-                {'detail':'You are not allow to create user.'},
-                status = status.HTTP_403_FORBIDDEN 
-            )
-        return super().create(request , *args, **kwargs)
+        if user_type == 'student':
+            if password != '111111g01':
+                return Response(
+                    {'detail':'Password is incorrect'},
+                    status = status.HTTP_403_FORBIDDEN 
+                )
+            return super().create(request, *args, **kwargs)

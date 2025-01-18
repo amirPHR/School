@@ -7,7 +7,13 @@ class ScoreSerializer(serializers.ModelSerializer):
         fields = ['id' , 'student' , 'subject' , 'score' , 'date' , 'disciplinery_status' , 'date_year'] 
 
 
-class GoodStudentSerializer(serializers.ModelSerializer):
+class BadStudentSerializer(serializers.ModelSerializer):
+    student = serializers.StringRelatedField()
+    score = serializers.StringRelatedField()
+    subject = serializers.StringRelatedField()
+    disciplinery_status = serializers.StringRelatedField() 
+    date_year = serializers.StringRelatedField()
+    
     class Meta:
         model = Score 
-        fields = ['student' , 'score' , 'disciplinery_status']
+        fields = ['student' , 'score' , 'subject' , 'disciplinery_status' , 'date_year']

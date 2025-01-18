@@ -10,5 +10,13 @@ class User(AbstractUser):
     
     user_type = models.CharField(max_length=50 , choices = USER_TYPE , default = 'student') 
     
+    def save(self, *args, **kwargs):
+        if self.user_type == 'admin':
+            self.is_staff = True
+        else:
+            self.is_staff = False 
+        super().save(*args, **kwargs) 
+        
     def __str__(self):
         return f'{self.username} ({self.user_type})'
+    

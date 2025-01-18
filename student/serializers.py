@@ -17,4 +17,4 @@ class StudentSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('National code must contain only digits.')
         if len(value) != 10:
             raise serializers.ValidationError('National code must be exactly 10 digits.') 
-        return value 
+        return value

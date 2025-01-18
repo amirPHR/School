@@ -9,6 +9,9 @@ class ReportCard(models.Model):
     def calculate_average(self):
         scores = self.score.all() 
         if scores.exists():
-            total_score = sum(Score.score for score in scores) 
-            return total_score / scores.count() 
+            total_score = sum(score.score for score in scores) 
+            return total_score / scores.count()
         return 0 
+    
+    def __str__(self):
+        return f'Report Card for {self.student.user.username}' 
