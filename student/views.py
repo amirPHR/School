@@ -15,11 +15,10 @@ from .permission import IsStudentOrAdmin
 # Import serializeres and models 
 from .serializers import StudentSerializer  
 from .models import Student  
-from user.models import User  
 
 # Constants for searching, and ordering
-SEARCH_FIELDS = ['national_code', 'phone_number', 'user__first_name', 'user__last_name' , 'user__username']
-ORDERING_FIELDS = ['class_room__base', 'class_room__field', 'id']
+SEARCH_FIELDS = ['national_code', 'phone_number', 'user__username']
+ORDERING_FIELDS = ['class_room__base', 'class_room__field']
 DEFAULT_ORDERING = ['user__username']
 
 # Student ViewSet
@@ -46,12 +45,12 @@ class StudentViewSet(ModelViewSet):
         return super().get_queryset()
     
     def create(self, request, *args, **kwargs):
-        """
+        """ 
         Custom create method:
         - Restrict students to only create profiles for themselves.
         """
         user = request.user
-
+        
         if user.user_type == 'student' and 'user' in request.data:
             if int(request.data['user']) != user.id:
                 return Response(

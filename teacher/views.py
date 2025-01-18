@@ -29,6 +29,7 @@ class TeacherViewSet(ModelViewSet):
     search_fields = SEARCH_FIELDS
     ordering_fields = ORDERING_FIELDS
     ordering = DEFAULT_ORDERING
+    pagination_class = DefaultPagination
     permission_classes = [IsAuthenticated , IsTeacherOrAdmin]
     
     def get_queryset(self):

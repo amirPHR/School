@@ -10,7 +10,7 @@ class ReportCard(models.Model):
         scores = self.score.all() 
         if scores.exists():
             total_score = sum(score.score for score in scores) 
-            return total_score / scores.count()
+            return total_score / 8
         return 0 
     
     def __str__(self):

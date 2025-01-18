@@ -1,5 +1,6 @@
 from django.db import models 
- 
+
+# ClassRoom Model
 class ClassRoom(models.Model):
     BASE_CHOICES = [
         ('10th' , '10th') ,

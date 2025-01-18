@@ -1,10 +1,8 @@
 # Import rest_framework libraries
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAdminUser
-from rest_framework.response import Response
-from rest_framework import status
 
 # Import Pagination class from core app
 from core.pagination import DefaultPagination
@@ -17,6 +15,13 @@ from .serializers import ClassRoomSerializer
 ORDERING_FIELDS = ['base', 'field']
 DEFAULT_ORDERING = ['base']
 
+
+"""
+
+Just admin can create,update and delete ClassRoom!
+
+"""
+
 # ClassRoom ViewSet
 class ClassRoomViewSet(ModelViewSet):
     queryset = ClassRoom.objects.all()
@@ -25,36 +30,4 @@ class ClassRoomViewSet(ModelViewSet):
     ordering_fields = ORDERING_FIELDS
     ordering = DEFAULT_ORDERING
     pagination_class = DefaultPagination
-    # permission_classes = [IsAdminUser]  
-    
-    def get_queryset(self):
-        user = self.request.user 
-        if user.user_type != 'admin':
-            return Response(
-                {'detail':'You do not have permission to perform this action.'},
-                status = status.HTTP_403_FORBIDDEN
-            )
-        return super().get_queryset()
-    
-
-    def create(self, request, *args, **kwargs):
-        """
-        Override create method to restrict creation to admin users only.
-        """
-        if request.user.user_type != 'admin':
-            return Response(
-                {'detail': 'You are not allowed to create Class Room.'},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        return super().create(request, *args, **kwargs)
-
-    def update(self, request, *args, **kwargs):
-        """
-        Override update method to restrict updates to admin users only.
-        """
-        if request.user.user_type != 'admin':
-            return Response(
-                {'detail': 'You are not allowed to update Class Room.'},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        return super().update(request, *args, **kwargs)
+    permission_classes = [IsAdminUser]  

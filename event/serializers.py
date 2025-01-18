@@ -1,12 +1,7 @@
 from rest_framework import serializers 
-from .models import Event , SignUpToEvent 
+from .models import Event 
 
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event 
         fields = ['name' , 'description' , 'date'] 
-
-class SignUpToEventSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SignUpToEvent 
-        fields = ['user' , 'event']

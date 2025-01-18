@@ -2,6 +2,7 @@ from django.db import models
 from user.models import User 
 from class_room.models import ClassRoom
 
+# Student Model
 class Student(models.Model):
     user = models.OneToOneField(User , on_delete = models.CASCADE) 
     father_name = models.CharField(max_length=50) 

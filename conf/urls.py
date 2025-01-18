@@ -16,7 +16,7 @@ from class_room.views import ClassRoomViewSet
 from subject.views import SubjectViewSet 
 from teacher.views import TeacherViewSet
 from score.views import ScoreViewSet , BadStudentViewSet
-from event.views import EventViewSet , SignUpToEventViewSet
+from event.views import EventViewSet 
 from report_card.views import ReportCardViewSet
 
 # Admin site customization
@@ -29,14 +29,11 @@ router.register(r'student', StudentViewSet)  # Student API
 router.register(r'class_room', ClassRoomViewSet) # ClassRoom API
 router.register(r'subject' , SubjectViewSet) # Subject API 
 router.register(r'teacher' , TeacherViewSet) # Teacher API 
-router.register(r'ReportCard', ReportCardViewSet) 
+router.register(r'ReportCard', ReportCardViewSet) # ReportCard API
+router.register(r'event' , EventViewSet , basename='event') # Event API
 # Score API
 router.register(r'score' , ScoreViewSet , basename='score') 
 router.register(r'BadStudent', BadStudentViewSet , basename='good_student')
-
-# Event API 
-router.register(r'event' , EventViewSet , basename='event') 
-router.register(r'SignUpToEvent' , SignUpToEventViewSet , basename='signuptoevent')
 
 # Swagger Schema View
 schema_view = get_schema_view(
