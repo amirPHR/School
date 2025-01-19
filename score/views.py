@@ -2,7 +2,7 @@
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend 
 from rest_framework.filters import SearchFilter , OrderingFilter 
-from rest_framework.permissions import IsAuthenticated 
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -48,14 +48,4 @@ class BadStudentViewSet(ModelViewSet):
         date_year = 'second_turn'
     )
     serializer_class = BadStudentSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user 
-        if user.user_type == 'admin':
-            return super().get_queryset()
-        
-        return Response(
-            {'detail':'You can not see bad scores.'},
-            status = status.HTTP_403_FORBIDDEN 
-        )
+    permission_classes = [IsAuthenticated, IsAdminUser]
