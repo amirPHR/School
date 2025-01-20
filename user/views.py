@@ -6,6 +6,8 @@ from django_filters import rest_framework as filters
 from rest_framework.response import Response
 from rest_framework import status
 
+from drf_yasg.utils import swagger_auto_schema
+
 # Import pagination in core app
 from core.pagination import DefaultPagination
 
@@ -44,7 +46,7 @@ class UserViewSet(ModelViewSet):
     ordering = DEFAULT_ORDERING
     filterset_class = UserFilterSet
     pagination_class = DefaultPagination
-    
+
     def get_queryset(self): 
         """
         Users can only see their profiles.
@@ -63,7 +65,7 @@ class UserViewSet(ModelViewSet):
         permission for admin password   
         """
         if user_type in ['admin' , 'teacher']:
-            if password != '0960034455@gholampour':
+            if password != '123456admin':
                 return Response(
                     {'detail':'Password is incorrect'},
                     status = status.HTTP_403_FORBIDDEN)
@@ -72,7 +74,7 @@ class UserViewSet(ModelViewSet):
         permission for student password.
         """
         if user_type == 'student':
-            if password != '111111g01':
+            if password != '123456student':
                 return Response(
                     {'detail':'Password is incorrect'},
                     status = status.HTTP_403_FORBIDDEN 

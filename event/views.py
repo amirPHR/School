@@ -14,6 +14,10 @@ from core.permission import IsAdmin
 
 # Event ViewSet
 class EventViewSet(ModelViewSet):
+    """
+    This is a Event API:
+    - just admin can create, delete, update Event 
+    """
     queryset = Event.objects.all() 
     serializer_class = EventSerializer 
     pagination_class = DefaultPagination

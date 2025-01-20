@@ -23,6 +23,10 @@ DEFAULT_ORDERING = ['user__username']
 
 # Student ViewSet
 class StudentViewSet(ModelViewSet):
+    """
+    This is a Student API:
+    - only students can create, delete, update their profiles here
+    """
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]

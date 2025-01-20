@@ -23,6 +23,10 @@ DEFAULT_ORDERING = ['id']
 
 # Score ViewSet 
 class ScoreViewSet(ModelViewSet):
+    """
+    This is a Score API:
+    - only admin and teachers can create, delete, update scores 
+    """
     queryset = Score.objects.all()
     serializer_class = ScoreSerializer
     filter_backends = [DjangoFilterBackend , SearchFilter , OrderingFilter] 

@@ -18,6 +18,10 @@ SEARCH_AND_ORDERING_FIELDS = ['name']
     
 # Subject ViewSet 
 class SubjectViewSet(ModelViewSet):
+    """
+    This is a Subject API:
+    - only admin can create, delete, update subjects 
+    """
     queryset = Subject.objects.all() 
     serializer_class = SubjectSerializer
     pagination_class = DefaultPagination

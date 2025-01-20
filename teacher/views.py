@@ -23,6 +23,10 @@ DEFAULT_ORDERING = ['user__username']
 
 # TeacherViewSet
 class TeacherViewSet(ModelViewSet):
+    """
+    This is a Teacher API:
+    - only teachers can create, delete, update their profiles here
+    """
     queryset = Teacher.objects.all()
     serializer_class = TeacherSerializer
     filter_backends = [DjangoFilterBackend , SearchFilter , OrderingFilter] 

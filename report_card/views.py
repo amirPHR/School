@@ -22,6 +22,11 @@ ORDERING_FILTER = ['calculate_average', 'score']
 
 # ReportCard ViewSet
 class ReportCardViewSet(ModelViewSet):
+    """
+    This is a ReportCard API:
+    - just admin can create, delete, update ReportCard
+    - Student just can see thei ReportCard
+    """
     queryset = ReportCard.objects.all()
     serializer_class = ReportCardSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter] 
@@ -39,52 +44,3 @@ class ReportCardViewSet(ModelViewSet):
         if not user.user_type in ['admin']:
             return super().get_queryset().filter(student__user=user)  
         return super().get_queryset()
-
-
-    # def create(self , request , *args , **kwargs):
-    #     """
-    #     just admins can create ReportCards
-    #     """
-    #     user = request.user 
-    #     if user.user_type != 'admin':
-    #         return Response(
-    #             {'detail':'You are not allow to create Report Card.'},
-    #             status = status.HTTP_403_FORBIDDEN 
-    #         )
-    #     return super().create(request, *args, **kwargs) 
-    
-    # def destroy(self , request , *args , **kwargs):
-    #     """
-    #     just admins can delete ReportCards
-    #     """
-    #     user = request.user 
-    #     if user.user_type != 'admin':
-    #         return Response(
-    #             {'detail':'You are not allow to delete Report Card.'},
-    #             status = status.HTTP_403_FORBIDDEN 
-    #         )
-    #     return super().destroy(request, *args, **kwargs) 
-    
-    # def update(self , request , *args , **kwargs):
-    #     """
-    #     just admins can update ReportCards
-    #     """
-    #     user = request.user 
-    #     if user.user_type != 'admin':
-    #         return Response(
-    #             {'detail':'You are not allow to update Report Card.'},
-    #             status = status.HTTP_403_FORBIDDEN 
-    #         )
-    #     return super().update(request, *args, **kwargs) 
-    
-    # def partial_update(self , request , *args , **kwargs):
-    #     """
-    #     just admins can partial_update ReportCards
-    #     """
-    #     user = request.user 
-    #     if user.user_type != 'admin':
-    #         return Response(
-    #             {'detail':'You are not allow to update Report Card.'},
-    #             status = status.HTTP_403_FORBIDDEN 
-    #         )
-    #     return super().partial_update(request, *args, **kwargs) 

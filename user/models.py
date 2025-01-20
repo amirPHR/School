@@ -9,7 +9,7 @@ class User(AbstractUser):
         ('admin' , 'Admin'), 
     ] 
     
-    user_type = models.CharField(max_length=50 , choices = USER_TYPE , default = 'student') 
+    user_type = models.CharField(max_length=50 , choices = USER_TYPE, default='admin') 
     
     def save(self, *args, **kwargs):
         if self.user_type == 'admin':
@@ -20,4 +20,3 @@ class User(AbstractUser):
         
     def __str__(self):
         return f'{self.username} ({self.user_type})'
-    

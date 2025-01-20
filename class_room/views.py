@@ -15,15 +15,12 @@ from .serializers import ClassRoomSerializer
 ORDERING_FIELDS = ['base', 'field']
 DEFAULT_ORDERING = ['base']
 
-
-"""
-
-Just admin can create,update and delete ClassRoom!
-
-"""
-
 # ClassRoom ViewSet
 class ClassRoomViewSet(ModelViewSet):
+    """
+    This is a ClassRoom API:
+    - just admin can create, delete, update ClassRoom
+    """
     queryset = ClassRoom.objects.all()
     serializer_class = ClassRoomSerializer
     filter_backends = [OrderingFilter, DjangoFilterBackend]
